@@ -16,6 +16,9 @@ Code uses *Sparse Softmax Cross Entropy* as loss function, it doesn't need *One 
 *   Numpy;
 *   Packaging;
 
+##### *-> WARNING <-* 
+##### In requirements.txt check which version of tensorflow do you need! By default *tensorflow-gpu* is enabled
+
 ### FLAGS
 
 #### Checkpoint and evaluation
