@@ -8,6 +8,13 @@ Check <a href="https://github.com/CVPRLab-UniParthenope/3DPyranet/blob/master/tr
 for the correct pipeline and model usage.
 Code uses *Sparse Softmax Cross Entropy* as loss function, it doesn't need *One Hot Encoding*.
 
+## Documentation
+
+Documentation can be found <a href="https://3dpyranet.readthedocs.io/en/latest/index.html">here</a>:
+
+https://3dpyranet.readthedocs.io/
+
+
 ### Dependencies
 
 *   Python 3;
