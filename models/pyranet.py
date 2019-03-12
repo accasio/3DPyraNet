@@ -133,10 +133,11 @@ def ws3d(input_tensor, weights, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1),
             return tf.squeeze(corr_axis_sorted, axis=[2, 6], name="xcorr_output")
 
 
-def max_pool3d(input_data, weight_depth=3, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1),
+def max_pool3d(input_data, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1),
                padding='VALID', data_format='NDHWC', name="pool3D"):
     with tf.name_scope(name):
         _, d, h, w, fms = map(int, input_data.shape)
+        weight_depth = rf[0]
 
         out_depth, _, _ = map(int, ws3d_layer_output_shape(input_shape=(d, h, w), rf=rf, strides=strides))
         pool = tf.nn.max_pool3d(input_data, strides, strides, padding=padding,
@@ -150,10 +151,11 @@ def max_pool3d(input_data, weight_depth=3, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1)
         return output
 
 
-def avg_pool3d(input_data, weight_depth=3, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1),
+def avg_pool3d(input_data, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1),
                padding='VALID', data_format='NDHWC', name="pool3D"):
     with tf.name_scope(name):
         _, d, h, w, fms = map(int, input_data.shape)
+        weight_depth = rf[0]
 
         out_depth, _, _ = map(int, ws3d_layer_output_shape(input_shape=(d, h, w), rf=rf, strides=strides))
         pool = tf.nn.avg_pool3d(input_data, strides, strides, padding=padding,

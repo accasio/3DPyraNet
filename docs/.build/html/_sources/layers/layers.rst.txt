@@ -1,0 +1,8 @@
+LAYERS
+======
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Layers
+
+    ./pooling

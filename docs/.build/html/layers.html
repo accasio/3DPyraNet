@@ -1,0 +1,263 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3DPyranet layers &mdash; 3DPyranet  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> 3DPyranet
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="layers/pooling.html">3DPyranet Pooling Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">3DPyranet models</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">3DPyranet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>3DPyranet layers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/layers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-layers.applications">
+<span id="dpyranet-layers"></span><h1>3DPyranet layers<a class="headerlink" href="#module-layers.applications" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-layers.weighted_sum"></span><dl class="function">
+<dt id="layers.weighted_sum.ws2d">
+<code class="descclassname">layers.weighted_sum.</code><code class="descname">ws2d</code><span class="sig-paren">(</span><em>input_data</em>, <em>out_filters</em>, <em>rf=4</em>, <em>strides=1</em>, <em>act_fn=&lt;function lrelu&gt;</em>, <em>kernel_initializer=None</em>, <em>bias_initializer=None</em>, <em>weight_decay=None</em>, <em>padding='VALID'</em>, <em>data_format='NHWC'</em>, <em>log=False</em>, <em>reuse=False</em>, <em>name='weighted_sum_2d_layer'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/layers/weighted_sum.html#ws2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#layers.weighted_sum.ws2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the Weighted Sum 2D layer on the input. It uses the 3D weighted sum to perform the computation
+extending the 2D input dimension in order to match the requirements of 3D layer (the new dimension doesn’t
+influence results, it can be considered like a placeholder)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_data</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A 4D tensor with dimensions <code class="docutils literal notranslate"><span class="pre">[batch_size,</span> <span class="pre">height,</span> <span class="pre">width,</span> <span class="pre">in_channels]</span></code></li>
+<li><strong>out_filters</strong> (<em>int</em>) – Number of output filters</li>
+<li><strong>rf</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>Tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em><em>]</em>) – Receptive field (filter mask) size, can be an integer
+(same size will be used on all dimensions) or a tuple indicating (height, width)</li>
+<li><strong>strides</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>Tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em><em>]</em>) – Sliding step, can be an integer
+(same step will be used on all dimensions) or a tuple indicating (height, width)</li>
+<li><strong>act_fn</strong> – A valid activation function handler. Default is provided leaky_relu</li>
+<li><strong>kernel_initializer</strong> – Initializer used for kernel weights, default None (uses Xavier initializer)</li>
+<li><strong>bias_initializer</strong> – Initializer used for bias, default None (uses Xavier initializer)</li>
+<li><strong>weight_decay</strong> – Weight decay handler function, default None.</li>
+<li><strong>padding</strong> (<em>str</em>) – Type of padding, only VALID is supported.</li>
+<li><strong>data_format</strong> (<em>str</em>) – NHWC : Batch x Height x Width x Channels</li>
+<li><strong>log</strong> (<em>bool</em>) – Log networks structure (weights, bias and output)</li>
+<li><strong>reuse</strong> (<em>bool</em>) – Not used.</li>
+<li><strong>name</strong> (<em>str</em>) – Layer name, used in variable_scope</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Weighted Sum 2D tensor with output of size <code class="docutils literal notranslate"><span class="pre">[batch_size,</span> <span class="pre">out_height,</span> <span class="pre">out_width,</span> <span class="pre">out_channels]</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="layers.weighted_sum.ws3d">
+<code class="descclassname">layers.weighted_sum.</code><code class="descname">ws3d</code><span class="sig-paren">(</span><em>input_data</em>, <em>out_filters</em>, <em>rf=(3</em>, <em>4</em>, <em>4)</em>, <em>strides=(1</em>, <em>1</em>, <em>1)</em>, <em>act_fn=&lt;function lrelu&gt;</em>, <em>kernel_initializer=None</em>, <em>bias_initializer=None</em>, <em>weight_decay=None</em>, <em>padding='VALID'</em>, <em>data_format='NDHWC'</em>, <em>log=False</em>, <em>reuse=False</em>, <em>name='weighted_sum_3d_layer'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/layers/weighted_sum.html#ws3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#layers.weighted_sum.ws3d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the Weighted Sum 3D layer on the input</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_data</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A 5D tensor with dimensions <code class="docutils literal notranslate"><span class="pre">[batch_size,</span> <span class="pre">depth,</span> <span class="pre">height,</span> <span class="pre">width,</span> <span class="pre">in_channels]</span></code></li>
+<li><strong>out_filters</strong> (<em>int</em>) – Number of output filters</li>
+<li><strong>rf</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>Tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em><em>]</em>) – Receptive field (filter mask) size, can be an integer
+(same size will be used on all dimensions) or a tuple indicating (depth, height, width)</li>
+<li><strong>strides</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>Tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>)</em><em>]</em>) – Sliding step, can be an integer
+(same step will be used on all dimensions) or a tuple indicating (depth, height, width)</li>
+<li><strong>act_fn</strong> – A valid activation function handler. Default is provided leaky_relu</li>
+<li><strong>kernel_initializer</strong> – Initializer used for kernel weights, default None (uses Xavier initializer)</li>
+<li><strong>bias_initializer</strong> – Initializer used for bias, default None (uses Xavier initializer)</li>
+<li><strong>weight_decay</strong> – Weight decay handler function, default None.</li>
+<li><strong>padding</strong> (<em>str</em>) – Type of padding, only VALID is supported.</li>
+<li><strong>data_format</strong> (<em>str</em>) – NDHWC : Batch x Depth x Height x Width x Channels</li>
+<li><strong>log</strong> (<em>bool</em>) – Log networks structure (weights, bias and output)</li>
+<li><strong>reuse</strong> (<em>bool</em>) – Not used.</li>
+<li><strong>name</strong> (<em>str</em>) – Layer name, used in variable_scope</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Weighted Sum 3D tensor with output of size <code class="docutils literal notranslate"><span class="pre">[batch_size,</span> <span class="pre">out_depth,</span> <span class="pre">out_height,</span> <span class="pre">out_width,</span> <span class="pre">out_channels]</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-layers.variables"></span><span class="target" id="module-layers.commons"></span></div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Emanuel Di Nardo
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
