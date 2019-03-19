@@ -1,4 +1,4 @@
-from models import pyranet
+from ..models import pyranet
 from .variables import *
 from .utils import check_initializer, check_receptive_field, check_strides
 
@@ -32,6 +32,9 @@ def max_pooling2d(input_data, rf=(2, 2), strides=(2, 2), act_fn=pyranet.lrelu,
 
     rf = check_receptive_field(rf, size=2)
     strides = check_strides(strides, size=2)
+
+    if data_format == "NHWC":
+        data_format = "NDHWC"
 
     with tf.name_scope(name):
         input_data = tf.expand_dims(input_data, axis=1)
@@ -71,6 +74,9 @@ def avg_pooling2d(input_data, rf=(2, 2), strides=(2, 2), act_fn=pyranet.lrelu,
 
     rf = check_receptive_field(rf, size=2)
     strides = check_strides(strides, size=2)
+
+    if data_format == "NHWC":
+        data_format = "NDHWC"
 
     with tf.name_scope(name):
         input_data = tf.expand_dims(input_data, axis=1)

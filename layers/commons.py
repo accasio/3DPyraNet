@@ -1,5 +1,5 @@
 import tensorflow as tf
-from models.pyranet import *
+from ..models.pyranet import *
 from .variables import *
 
 

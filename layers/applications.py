@@ -2,7 +2,7 @@ import tensorflow as tf
 from .weighted_sum import ws3d
 from .commons import normalization_layer
 from .pooling import max_pooling3d
-from models import pyranet
+from ..models import pyranet
 
 
 def strict_norm_net(inputs, feature_maps=3, act_fn=pyranet.lrelu, weight_decay=None,

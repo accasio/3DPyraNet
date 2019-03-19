@@ -18,7 +18,7 @@ def check_receptive_field(rf, size):
         if type(rf) == int:
             rf = 1, rf, rf
         elif len(rf) == 2:
-            rf = (1, ) + (rf, rf)
+            rf = (1, ) + rf
         else:
             tf.logging.error("Receptive field size in iterable format must be 2")
             raise ValueError("Receptive field size in iterable format must be 2")

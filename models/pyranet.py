@@ -83,7 +83,7 @@ def pool3d_layer_output_shape(input_shape, rf=(2, 2, 2), strides=(1, 2, 2, 2, 1)
     return output_depth, output_height, output_width
 
 
-def ws3d(input_tensor, weights, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1),
+def ws3d_base(input_tensor, weights, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1),
          padding="VALID", data_format="NDHWC", name="ws3d"):
     """
     PyraNet uses a VALID padding type.

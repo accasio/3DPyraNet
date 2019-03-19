@@ -1,5 +1,5 @@
 import tensorflow as tf
-from models.pyranet import *
+from ..models.pyranet import *
 from .variables import *
 from .utils import check_initializer
 
@@ -50,6 +50,9 @@ def ws2d(input_data, out_filters, rf=4, strides=1, act_fn=lrelu,
             strides = (1, 1) + strides[1:-2] + (1, )
         else:
             strides = (1, ) + strides
+
+    if data_format == "NHWC":
+        data_format = "NDHWC"
 
     with tf.name_scope(name):
         input_data = tf.expand_dims(input_data, axis=1)
@@ -109,7 +112,7 @@ def ws3d(input_data, out_filters, rf=(3, 4, 4), strides=(1, 1, 1), act_fn=lrelu,
         weights = ws3d_weight_initializer("weights", shape=(rf[0], h, w, c, out_filters),
                                           initializer=kernel_initializer, weight_decay=weight_decay)
 
-        net = ws3d(input_data, weights, rf=rf, strides=strides,
+        net = ws3d_base(input_data, weights, rf=rf, strides=strides,
                    padding=padding, data_format=data_format, name="ws3d")
 
         bias = ws3d_bias_initializer_like("bias", tensor=net, initializer=bias_initializer)
