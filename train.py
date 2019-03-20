@@ -1,11 +1,12 @@
 import tensorflow as tf
 import numpy as np
-from datasets import input_data
-import layers
+from pyranet.datasets import input_data
+from pyranet import layers
 import os
 import time
 from tqdm import trange
 from packaging import version
+import sys
 
 flags = tf.app.flags
 
@@ -61,13 +62,14 @@ params_str = ""
 FLAGS = flags.FLAGS
 if version.parse(tf.__version__) < version.parse('1.4'):
     FLAGS._parse_flags()
-    print("Parameters:")
-    for attr, value in sorted(FLAGS.__flags.items()):
-        params_str += "{} = {}\n".format(attr.upper(), value)
-        print("{} = {}".format(attr.upper(), value))
-    print("")
 else:
-    params_str = "NOT SUPPORTED, UNABLE TO TRY ON TF VERSION > 1.2"
+    FLAGS(sys.argv)
+
+print("Parameters:")
+for attr, value in sorted(FLAGS.__flags.items()):
+    params_str += "{} = {}\n".format(attr.upper(), value)
+    print("{} = {}".format(attr.upper(), value))
+print("")
 
 
 def compute_loss(name_scope, logits, labels):
@@ -181,7 +183,7 @@ def train():
     net = layers.strict_norm_net(input_placeholder, feature_maps=FLAGS.feature_maps, weight_decay=FLAGS.weight_decay)
 
     logits = layers.fc_layer(net, weight_size=FLAGS.num_classes, act_fn=None,
-                                     name="FC_OUT", weight_decay=FLAGS.weight_decay)
+                             name="FC_OUT", weight_decay=FLAGS.weight_decay)
 
     with tf.name_scope("Loss"):
         loss = compute_loss("Dataset_Name", logits, labels_placeholder)

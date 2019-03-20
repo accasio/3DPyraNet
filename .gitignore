@@ -5,6 +5,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+docs/.build
+.idea
+train_dir
+
 # C extensions
 *.so
 
