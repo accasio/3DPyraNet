@@ -1,7 +1,7 @@
 import tensorflow as tf
 from ..models.pyranet import *
 from .variables import *
-from .utils import check_initializer
+from .utils import check_variable_initializer
 
 
 def ws2d(input_data, out_filters, rf=4, strides=1, act_fn=lrelu,
@@ -21,7 +21,7 @@ def ws2d(input_data, out_filters, rf=4, strides=1, act_fn=lrelu,
         act_fn: A valid activation function handler. Default is provided leaky_relu
         kernel_initializer: Initializer used for kernel weights, default None (uses Xavier initializer)
         bias_initializer: Initializer used for bias, default None (uses Xavier initializer)
-        weight_decay: Weight decay handler function, default None.
+        weight_decay: L2 decay lambda value.
         padding (str): Type of padding, only VALID is supported.
         data_format (str): NHWC : Batch x Height x Width x Channels
         log (bool): Log networks structure (weights, bias and output)
@@ -78,7 +78,7 @@ def ws3d(input_data, out_filters, rf=(3, 4, 4), strides=(1, 1, 1), act_fn=lrelu,
         act_fn: A valid activation function handler. Default is provided leaky_relu
         kernel_initializer: Initializer used for kernel weights, default None (uses Xavier initializer)
         bias_initializer: Initializer used for bias, default None (uses Xavier initializer)
-        weight_decay: Weight decay handler function, default None.
+        weight_decay: L2 decay lambda value.
         padding (str): Type of padding, only VALID is supported.
         data_format (str): NDHWC : Batch x Depth x Height x Width x Channels
         log (bool): Log networks structure (weights, bias and output)
@@ -106,8 +106,8 @@ def ws3d(input_data, out_filters, rf=(3, 4, 4), strides=(1, 1, 1), act_fn=lrelu,
 
     with tf.variable_scope(name, reuse=reuse):
         _, d, h, w, c = map(int, input_data.shape)
-        kernel_initializer = check_initializer(kernel_initializer, default='Xavier')
-        bias_initializer = check_initializer(bias_initializer, default='Xavier')
+        kernel_initializer = check_variable_initializer(kernel_initializer, default='Xavier')
+        bias_initializer = check_variable_initializer(bias_initializer, default='Xavier')
 
         weights = ws3d_weight_initializer("weights", shape=(rf[0], h, w, c, out_filters),
                                           initializer=kernel_initializer, weight_decay=weight_decay)

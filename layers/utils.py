@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-def check_initializer(initializer_type, default):
+def check_variable_initializer(initializer_type, default):
     if initializer_type is None:
         if default == 'XAVIER':
             return tf.contrib.ayers.\

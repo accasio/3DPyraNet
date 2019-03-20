@@ -1,6 +1,6 @@
 from ..models import pyranet
 from .variables import *
-from .utils import check_initializer, check_receptive_field, check_strides
+from .utils import check_variable_initializer, check_receptive_field, check_strides
 
 
 def max_pooling2d(input_data, rf=(2, 2), strides=(2, 2), act_fn=pyranet.lrelu,
@@ -19,7 +19,7 @@ def max_pooling2d(input_data, rf=(2, 2), strides=(2, 2), act_fn=pyranet.lrelu,
         act_fn: A valid activation function handler. Default is provided leaky_relu
         kernel_initializer: Initializer used for kernel weights, default None (uses Xavier initializer)
         bias_initializer: Initializer used for bias, default None (uses Xavier initializer)
-        weight_decay: Weight decay handler function, default None.
+        weight_decay: L2 decay lambda value.
         padding (str): Type of padding, only VALID is supported.
         data_format (str): NHWC : Batch x Height x Width x Channels
         log (bool): Log networks structure (weights, bias and output)
@@ -61,7 +61,7 @@ def avg_pooling2d(input_data, rf=(2, 2), strides=(2, 2), act_fn=pyranet.lrelu,
         act_fn: A valid activation function handler. Default is provided leaky_relu
         kernel_initializer: Initializer used for kernel weights, default None (uses Xavier initializer)
         bias_initializer: Initializer used for bias, default None (uses Xavier initializer)
-        weight_decay: Weight decay handler function, default None.
+        weight_decay: L2 decay lambda value.
         padding (str): Type of padding, only VALID is supported.
         data_format (str): NHWC : Batch x Height x Width x Channels
         log (bool): Log networks structure (weights, bias and output)
@@ -102,7 +102,7 @@ def max_pooling3d(input_data, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1), act_fn=pyra
         act_fn: A valid activation function handler. Default is provided leaky_relu
         kernel_initializer: Initializer used for kernel weights, default None (uses Xavier initializer)
         bias_initializer: Initializer used for bias, default None (uses Xavier initializer)
-        weight_decay: Weight decay handler function, default None.
+        weight_decay: L2 decay lambda value.
         padding (str): Type of padding, only VALID is supported.
         data_format (str): NDHWC : Batch x Depth x Height x Width x Channels
         log (bool): Log networks structure (weights, bias and output)
@@ -135,7 +135,7 @@ def avg_pooling3d(input_data, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1), act_fn=pyra
         act_fn: A valid activation function handler. Default is provided leaky_relu
         kernel_initializer: Initializer used for kernel weights, default None (uses Xavier initializer)
         bias_initializer: Initializer used for bias, default None (uses Xavier initializer)
-        weight_decay: Weight decay handler function, default None.
+        weight_decay: L2 decay lambda value.
         padding (str): Type of padding, only VALID is supported.
         data_format (str): NDHWC : Batch x Depth x Height x Width x Channels
         log (bool): Log networks structure (weights, bias and output)
@@ -169,7 +169,7 @@ def pool3d(input_data, pool_type, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1), act_fn=
         act_fn: A valid activation function handler. Default is provided leaky_relu
         kernel_initializer: Initializer used for kernel weights, default None (uses Xavier initializer)
         bias_initializer: Initializer used for bias, default None (uses Xavier initializer)
-        weight_decay: Weight decay handler function, default None.
+        weight_decay: L2 decay lambda value.
 
         padding (str): Type of padding, only VALID is supported.
         data_format (str): NDHWC : Batch x Depth x Height x Width x Channels
@@ -185,8 +185,8 @@ def pool3d(input_data, pool_type, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1), act_fn=
     strides = check_strides(strides, size=3)
 
     with tf.variable_scope(name, reuse=reuse):
-        kernel_initializer = check_initializer(kernel_initializer, default='XAVIER')
-        bias_initializer = check_initializer(bias_initializer, default='XAVIER')
+        kernel_initializer = check_variable_initializer(kernel_initializer, default='XAVIER')
+        bias_initializer = check_variable_initializer(bias_initializer, default='XAVIER')
 
         net = pool_type(input_data, rf=rf, strides=strides,
                         padding=padding, data_format=data_format)

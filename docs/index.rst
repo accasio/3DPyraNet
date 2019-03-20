@@ -13,6 +13,7 @@ Welcome to 3DPyranet's documentation!
 
    layers/pooling
    layers/ws
+   layers/common
 
 
 
