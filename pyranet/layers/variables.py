@@ -1,9 +1,9 @@
 import tensorflow as tf
 
 
-def get_variable_with_decay(name, shape, initializer, weight_decay=None):
+def get_variable_with_decay(name, shape, initializer, trainable=True, weight_decay=None):
     with tf.device("/cpu:0"):
-        var = tf.get_variable(name, shape=shape, initializer=initializer)
+        var = tf.get_variable(name, shape=shape, trainable=trainable, initializer=initializer)
 
     if weight_decay:
         wd = tf.nn.l2_loss(var) * weight_decay
