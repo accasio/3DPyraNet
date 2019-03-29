@@ -2,4 +2,3 @@ numpy
 #tensorflow-gpu
 tensorflow
 tqdm
-packaging

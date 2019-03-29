@@ -18,10 +18,9 @@ https://3dpyranet.readthedocs.io/
 ### Dependencies
 
 *   Python 3;
-*   Tensorflow 1.2+;
+*   Tensorflow 1.4+;
 *   TQDM;
 *   Numpy;
-*   Packaging;
 
 ##### *-> WARNING <-* 
 ##### In requirements.txt check which version of tensorflow do you need! By default *tensorflow-gpu* is enabled

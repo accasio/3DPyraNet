@@ -5,7 +5,6 @@ from pyranet import layers
 import os
 import time
 from tqdm import trange
-from packaging import version
 import sys
 
 flags = tf.app.flags
@@ -60,10 +59,7 @@ flags.DEFINE_boolean("use_nesterov", False, "Use Nesterov Momentum")
 
 params_str = ""
 FLAGS = flags.FLAGS
-if version.parse(tf.__version__) < version.parse('1.4'):
-    FLAGS._parse_flags()
-else:
-    FLAGS(sys.argv)
+FLAGS(sys.argv)
 
 print("Parameters:")
 for attr, value in sorted(FLAGS.__flags.items()):
