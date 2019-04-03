@@ -106,14 +106,14 @@ def ws3d(input_data, out_filters, rf=(3, 4, 4), strides=(1, 1, 1), act_fn=lrelu,
 
     with tf.variable_scope(name, reuse=reuse):
         _, d, h, w, c = map(int, input_data.shape)
-        kernel_initializer = check_variable_initializer(kernel_initializer, default='Xavier')
-        bias_initializer = check_variable_initializer(bias_initializer, default='Xavier')
+        kernel_initializer = check_variable_initializer(kernel_initializer, default='XAVIER')
+        bias_initializer = check_variable_initializer(bias_initializer, default='XAVIER')
 
         weights = ws3d_weight_initializer("weights", shape=(rf[0], h, w, c, out_filters),
                                           initializer=kernel_initializer, weight_decay=weight_decay)
 
         net = ws3d_base(input_data, weights, rf=rf, strides=strides,
-                   padding=padding, data_format=data_format, name="ws3d")
+                        padding=padding, data_format=data_format, name="ws3d")
 
         bias = ws3d_bias_initializer_like("bias", tensor=net, initializer=bias_initializer)
 
