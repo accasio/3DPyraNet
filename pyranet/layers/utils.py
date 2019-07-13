@@ -1,12 +1,23 @@
 import tensorflow as tf
 
 
+def _check_module_exists(module, library):
+    return module in dir(library)
+
+
 def check_variable_initializer(initializer_type, default):
     if initializer_type is None:
         if default == 'XAVIER':
-            return tf.contrib.ayers.\
-                variance_scaling_initializer(factor=1.0, mode='FAN_AVG',
-                                             uniform=True, dtype=tf.float32)
+            if _check_module_exists('initializers', tf):  # Avoid to know in which version the neede module is delivered
+                return tf.initializers.variance_scaling(
+                    scale=1.0,
+                    mode="fan_avg",
+                    distribution="truncated_normal"
+                )
+            else:
+                return tf.contrib.layers.\
+                    variance_scaling_initializer(factor=1.0, mode='FAN_AVG',
+                                                 uniform=True, dtype=tf.float32)
         else:
             return tf.initializers.truncated_normal()
     else:

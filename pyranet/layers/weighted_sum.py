@@ -105,7 +105,7 @@ def ws3d(input_data, out_filters, rf=(3, 4, 4), strides=(1, 1, 1), act_fn=lrelu,
         strides = (1, ) + strides[1:-2] + (1, )
 
     with tf.variable_scope(name, reuse=reuse):
-        _, d, h, w, c = map(int, input_data.shape)
+        _, d, h, w, c = [x.value for x in input_data.shape]
         kernel_initializer = check_variable_initializer(kernel_initializer, default='XAVIER')
         bias_initializer = check_variable_initializer(bias_initializer, default='XAVIER')
 

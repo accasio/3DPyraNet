@@ -28,7 +28,17 @@ def pool3d_weight_initializer_like(name, tensor, initializer, weight_decay=None)
     return get_variable_with_decay(name=name, shape=(1, h, w, f), initializer=initializer, weight_decay=weight_decay)
 
 
+def pool3d_weight_initializer_size_like(tensor):
+    _, d, h, w, f = tensor.shape.as_list()
+    return 1, h, w, f
+
+
 def pool3d_bias_initializer_like(name, tensor, initializer):
     _, d, _, _, f = tensor.shape.as_list()
 
     return get_variable_with_decay(name, shape=(d, 1, 1, f), initializer=initializer)
+
+
+def pool3d_bias_initializer_size_like(tensor):
+    _, d, _, _, f = tensor.shape.as_list()
+    return d, 1, 1, f

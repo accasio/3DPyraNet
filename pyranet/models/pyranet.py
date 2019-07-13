@@ -30,8 +30,10 @@ def ws3d_bias_initializer_like(name, tensor, initializer):
 
 
 def ws3d_layer_output_shape(input_shape, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1), padding="VALID"):
+    # Formula from: https://stackoverflow.com/a/44242277/926608
+
     padding = padding.upper()
-    input_shape = list(map(float, input_shape))
+    # input_shape = list(map(float, input_shape))
     if padding == "VALID":
         output_depth = np.round((input_shape[0] - rf[0] + 1.) / strides[1])
         output_height = np.round((input_shape[1] - rf[1] + 1.) / strides[2])
@@ -42,7 +44,7 @@ def ws3d_layer_output_shape(input_shape, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1), 
     else:
         raise NotImplementedError("{} is not a valid padding type".format(padding))
 
-    return output_depth, output_height, output_width
+    return output_depth, output_height, output_width, input_shape[-1]
 
 
 def pool3d_bias_initializer_like(name, tensor, initializer):
@@ -69,18 +71,17 @@ def pool3d_weight_initializer_like(name, tensor, initializer, weight_decay=None)
 
 def pool3d_layer_output_shape(input_shape, rf=(2, 2, 2), strides=(1, 2, 2, 2, 1), padding="VALID"):
     padding = padding.upper()
-    input_shape = list(map(float, input_shape))
     if padding == "VALID":
-        output_depth = np.round((input_shape[0] - rf[0] + 1) / strides[1])
-        output_height = np.round((input_shape[1] - rf[1] + 1) / strides[2])
-        output_width = np.round((input_shape[2] - rf[2] + 1) / strides[3])
+        output_depth = np.round((input_shape[0] - rf[0] + 1.) / strides[1])
+        output_height = np.round((input_shape[1] - rf[1] + 1.) / strides[2])
+        output_width = np.round((input_shape[2] - rf[2] + 1.) / strides[3])
     elif padding == "SAME":
         output_depth, output_height, output_width = [np.round(s / strides[i])
                                                      for i, s in zip(strides[1:-1], input_shape)]
     else:
         raise NotImplementedError("{} is not a valid padding type".format(padding))
 
-    return output_depth, output_height, output_width
+    return output_depth, output_height, output_width, input_shape[-1]
 
 
 def ws3d_base(input_tensor, weights, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1),
@@ -102,13 +103,14 @@ def ws3d_base(input_tensor, weights, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1),
 
         input_shape = list(input_tensor.shape)
         if data_format == "NDHWC":
-            n, d, h, w, c = map(int, input_shape)
+            _, d, h, w, c = [x.value for x in input_shape]
         else:
-            n, c, d, h, w = map(int, input_shape)
+            _, c, d, h, w = [x.value for x in input_shape]
 
         out_channels = int(weights.shape[-1])
 
-        output_depth, _, _ = map(int, ws3d_layer_output_shape((d, h, w), rf=rf, strides=strides, padding=padding))
+        output_depth, _, _, _ = [int(x) for x in ws3d_layer_output_shape((d, h, w, c),
+                                                                         rf=rf, strides=strides, padding=padding)]
         correlation = []
 
         # Bias and conv need to be intern to weighting
@@ -121,7 +123,6 @@ def ws3d_base(input_tensor, weights, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1),
                 for cd in range(output_depth):
                     s = cd * strides[1]
                     out_mul = tf.multiply(input_tensor[:, s:s + rf[0], :, :, :], weights[:, :, :, :, fm])
-
 
                     with tf.name_scope("Correlation_Op"):
                         corr = tf.nn.conv3d(out_mul, conv_weights,
@@ -136,10 +137,11 @@ def ws3d_base(input_tensor, weights, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1),
 def max_pool3d(input_data, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1),
                padding='VALID', data_format='NDHWC', name="pool3D"):
     with tf.name_scope(name):
-        _, d, h, w, fms = map(int, input_data.shape)
+        _, d, h, w, fms = input_data.shape
         weight_depth = rf[0]
 
-        out_depth, _, _ = map(int, ws3d_layer_output_shape(input_shape=(d, h, w), rf=rf, strides=strides))
+        out_depth, _, _, _ = [int(x) for x in ws3d_layer_output_shape(input_shape=(d, h, w, fms),
+                                                                      rf=rf, strides=strides)]
         pool = tf.nn.max_pool3d(input_data, strides, strides, padding=padding,
                                 data_format=data_format, name="max_pooling3d")
 
@@ -154,10 +156,11 @@ def max_pool3d(input_data, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1),
 def avg_pool3d(input_data, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1),
                padding='VALID', data_format='NDHWC', name="pool3D"):
     with tf.name_scope(name):
-        _, d, h, w, fms = map(int, input_data.shape)
+        _, d, h, w, fms = list(map(int, input_data.shape))
         weight_depth = rf[0]
 
-        out_depth, _, _ = map(int, ws3d_layer_output_shape(input_shape=(d, h, w), rf=rf, strides=strides))
+        out_depth, _, _, _ = [int(x) for x in ws3d_layer_output_shape(input_shape=(d, h, w, fms),
+                                                                      rf=rf, strides=strides)]
         pool = tf.nn.avg_pool3d(input_data, strides, strides, padding=padding,
                                 data_format=data_format, name="avg_pooling3d")
 
