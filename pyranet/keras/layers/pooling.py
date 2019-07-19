@@ -1,5 +1,6 @@
-from tensorflow.python import keras
 from tensorflow.python.keras import layers
+from tensorflow.python.keras import initializers
+from tensorflow.python.keras import activations
 from pyranet.layers.utils import *
 from pyranet.models.pyranet import *
 from pyranet.layers.variables import *
@@ -7,12 +8,12 @@ from pyranet.layers.variables import *
 
 class Pooling3D(layers.Layer):
 
-    def __init__(self, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1), activation=keras.layers.LeakyReLU(alpha=0.1),
+    def __init__(self, rf=(3, 2, 2), strides=(1, 1, 2, 2, 1), activation=activations.relu,
                  kernel_initializer=None, bias_initializer=None, weight_decay=None,
                  padding="VALID", data_format="NDHWC", log=False, name="pooling_3d_layer", **kwargs):
-        super(Pooling3D, self).__init__(**kwargs)
+        super(Pooling3D, self).__init__(name=name, **kwargs)
 
-        self.activation = activation
+        self.activation = activations.get(activation)
 
         self.rf = check_receptive_field(rf, 3)
         self.strides = check_strides(strides, 3)
@@ -23,7 +24,6 @@ class Pooling3D(layers.Layer):
 
         self.padding = padding
         self.data_format = data_format
-        self._name = name
 
         self.kernel = None
         self.bias = None
@@ -31,26 +31,28 @@ class Pooling3D(layers.Layer):
         self.log = log
 
     def build(self, input_shape):
+
         # Make sure to call the `build` method at the end
+        self.built = True
         super(Pooling3D, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
         kernel_shape = pool3d_weight_initializer_size_like(inputs)
         bias_shape = pool3d_bias_initializer_size_like(inputs)
 
-        # Move kernel and bias in build method
         if self.kernel is None:
             self.kernel = self.add_weight(name='kernel',
                                           shape=kernel_shape,
                                           initializer=self.kernel_initializer,
-                                          regularizer=keras.regularizers.l2(self.weight_decay)
+                                          regularizer=tf.keras.regularizers.l2(self.weight_decay)
                                           if self.weight_decay else None,
                                           trainable=True)
+
         if self.bias is None:
             self.bias = self.add_weight(name='bias',
                                         shape=bias_shape,
                                         initializer=self.bias_initializer,
-                                        regularizer=keras.regularizers.l2(self.weight_decay)
+                                        regularizer=tf.keras.regularizers.l2(self.weight_decay)
                                         if self.weight_decay else None,
                                         trainable=True)
 
@@ -67,6 +69,20 @@ class Pooling3D(layers.Layer):
             tf.logging.info("\t{} {}".format(self.x.name, self.x.shape))
 
         return x
+
+    def get_config(self):
+        config = {
+            'activation': activations.serialize(self.activation),
+            'receptive_field': self.rf,
+            'strides': self.strides,
+            'padding': self.padding,
+            'kernel_initializer': initializers.serialize(self.kernel_initializer),
+            'bias_initializer': initializers.serialize(self.bias_initializer),
+            'weight_decay': self.weight_decay,
+            'data_format': self.data_format
+        }
+        base_config = super(Pooling3D, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
 
 
 class MaxPooling3D(Pooling3D):
@@ -104,22 +120,7 @@ class MaxPooling3D(Pooling3D):
         return tf.TensorShape(shape)
 
     def get_config(self):
-        base_config = super(MaxPooling3D, self).get_config()
-
-        base_config['activation'] = self.activation
-
-        base_config['rf'] = self.rf
-        base_config['strides'] = self.strides
-
-        base_config['kernel_initializer'] = self.kernel_initializer
-        base_config['bias_initializer'] = self.bias_initializer
-        base_config['weight_decay'] = self.weight_decay
-
-        base_config['padding'] = self.padding
-        base_config['data_format'] = self.data_format
-        base_config['name'] = self._name
-
-        return base_config
+        return super(MaxPooling3D, self).get_config()
 
     @classmethod
     def from_config(cls, config):

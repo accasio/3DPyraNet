@@ -4,12 +4,13 @@ from tensorflow.python.keras import layers
 
 class ZeroMeanUnitVarianceNormalizer(layers.Layer):
 
-    def __init__(self, axes, epsilon=1e-8, name="norm_layer"):
-        super(ZeroMeanUnitVarianceNormalizer, self).__init__(name=name)
+    def __init__(self, axes, epsilon=1e-8, name="norm_layer", **kwargs):
+        super(ZeroMeanUnitVarianceNormalizer, self).__init__(name=name, **kwargs)
         self.axes = axes
         self.epsilon = epsilon
 
     def build(self, input_shape):
+        self.built = True
         super(ZeroMeanUnitVarianceNormalizer, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
@@ -22,6 +23,14 @@ class ZeroMeanUnitVarianceNormalizer(layers.Layer):
 
     def compute_output_shape(self, input_shape):
         return input_shape
+
+    def get_config(self):
+        config = {
+            'axes': self.axes,
+            'epsilon': self.epsilon
+        }
+        base_config = super(ZeroMeanUnitVarianceNormalizer, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
 
 
 def normalization(x, axes, epsilon=1e-8, name="norm_layer"):

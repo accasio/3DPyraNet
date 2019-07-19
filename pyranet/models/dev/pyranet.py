@@ -9,9 +9,9 @@ def ws3d_layer_output_shape_transposed(input_shape, rf=(3, 4, 4), strides=(1, 1,
         output_depth = np.round((input_shape[0] - rf[0] + 1.) / strides[1])
         output_height = np.round((input_shape[1] - rf[1] + 1.) / strides[2])
         output_width = np.round((input_shape[2] - rf[2] + 1.) / strides[3])
-        # output_depth = np.round((input_shape[0] - rf[0]) / strides[1] + 1.)
-        # output_height = np.round((input_shape[1] - rf[1]) / strides[2] + 1.)
-        # output_width = np.round((input_shape[2] - rf[2]) / strides[3] + 1.)
+        # output_depth = np.round((input_shape[0] - receptive_field[0]) / strides[1] + 1.)
+        # output_height = np.round((input_shape[1] - receptive_field[1]) / strides[2] + 1.)
+        # output_width = np.round((input_shape[2] - receptive_field[2]) / strides[3] + 1.)
     elif padding == "SAME":
         output_depth, output_height, output_width = [np.round(s / strides[i])
                                                      for i, s in zip(strides[1:-1], input_shape)]

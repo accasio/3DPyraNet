@@ -39,7 +39,7 @@ flags.DEFINE_integer("depth", 16, "Number of consecutive samples")
 flags.DEFINE_integer("height", 100, "Samples height")
 flags.DEFINE_integer("width", 100, "Samples width")
 flags.DEFINE_integer("in_channels", 1, "Samples channels")
-flags.DEFINE_integer("num_classes", 6, "Number of classes")
+flags.DEFINE_integer("num_classes", 3, "Number of classes")
 
 # Preprocessing
 flags.DEFINE_boolean("normalize", True, "Normalize image in range 0-1")
@@ -185,19 +185,24 @@ def train():
         optimizer = tf.keras.optimizers.SGD(lr=FLAGS.learning_rate, decay=0.0,
                                             momentum=0.9, nesterov=FLAGS.use_nesterov)
 
+    # TODO: check model serialization
+    model = applications.StrictPyranet3D(num_classes=FLAGS.num_classes, out_filters=FLAGS.feature_maps,
+                                         include_top=True, input_shape=(16, 100, 100, 1))
+
+    # or
+
     # model = tf.keras.models.Sequential()
-    # model.add(layers.WeightedSum3D(out_filters=FLAGS.feature_maps))
+    # model.add(layers.WeightedSum3D(filters=FLAGS.feature_maps))
     # model.add(layers.MaxPooling3D())
-    # model.add(layers.WeightedSum3D(out_filters=FLAGS.feature_maps))
+    # model.add(layers.WeightedSum3D(filters=FLAGS.feature_maps))
     # model.add(tf.keras.layers.Flatten())
     # model.add(tf.keras.layers.Dense(FLAGS.num_classes, activation='softmax'))
+    # model.summary()
 
-    model = applications.StrictPyranet3D(num_classes=FLAGS.num_classes, out_filters=FLAGS.feature_maps,
-                                         include_top=True)
-
-    model.compile(loss='categorical_crossentropy',
+    model.compile(loss='sparse_categorical_crossentropy',
                   optimizer=optimizer,
                   metrics=['accuracy'])
+
 
     model.fit(train_x, train_y, batch_size=FLAGS.batch_size, epochs=FLAGS.max_steps, callbacks=[lrate_decay])
 

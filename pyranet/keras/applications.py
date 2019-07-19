@@ -6,17 +6,22 @@ from pyranet.keras.layers import WeightedSum3D, MaxPooling3D, ZeroMeanUnitVarian
 
 class StrictPyranet3D(models.Model):
 
-    def __init__(self, num_classes, out_filters, include_top=True, weight_decay=None, log=None, name="3DStrictPyranet"):
-        super(StrictPyranet3D, self).__init__(name=name)
+    def __init__(self, num_classes, out_filters, input_shape=None, include_top=True,
+                 weight_decay=None, log=None, name="3DStrictPyranet",
+                 **kwargs):
+        super(StrictPyranet3D, self).__init__(name=name, **kwargs)
         self.num_classes = num_classes
 
-        self.ws3d_1 = WeightedSum3D(out_filters=out_filters, log=log, name="L1WS")
+        if input_shape is None:
+            input_shape = (100, 100, 1)
+
+        self.ws3d_1 = WeightedSum3D(filters=out_filters, input_shape=input_shape, log=log, name="L1WS")
         self.norm_2 = ZeroMeanUnitVarianceNormalizer(axes=(2, 3), name="NORM_2")
 
         self.pool3d_3 = MaxPooling3D(weight_decay=weight_decay, log=log, name="L3P")
         self.norm_4 = ZeroMeanUnitVarianceNormalizer(axes=(2, 3), name="NORM_4")
 
-        self.ws3d_5 = WeightedSum3D(out_filters=out_filters, log=log, name="L5WS")
+        self.ws3d_5 = WeightedSum3D(filters=out_filters, log=log, name="L5WS")
         self.norm_6 = ZeroMeanUnitVarianceNormalizer(axes=(2, 3), name="NORM_6")
 
         self.include_top = include_top

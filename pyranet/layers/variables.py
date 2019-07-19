@@ -33,6 +33,11 @@ def pool3d_weight_initializer_size_like(tensor):
     return 1, h, w, f
 
 
+def pool3d_weight_initializer_size_by(input_shape):
+    _, d, h, w, f = input_shape
+    return 1, h, w, f
+
+
 def pool3d_bias_initializer_like(name, tensor, initializer):
     _, d, _, _, f = tensor.shape.as_list()
 
@@ -41,4 +46,9 @@ def pool3d_bias_initializer_like(name, tensor, initializer):
 
 def pool3d_bias_initializer_size_like(tensor):
     _, d, _, _, f = tensor.shape.as_list()
+    return d, 1, 1, f
+
+
+def pool3d_bias_initializer_size_by(input_shape):
+    _, d, _, _, f = input_shape
     return d, 1, 1, f
