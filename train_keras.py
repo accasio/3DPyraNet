@@ -64,7 +64,7 @@ FLAGS(sys.argv)
 print("Parameters:")
 for attr, value in sorted(FLAGS.__flags.items()):
     params_str += "{} = {}\n".format(attr.upper(), value)
-    print("{} = {}".format(attr.upper(), value))
+    print("{} = {}".format(attr.upper(), value.value))
 print("")
 
 
@@ -129,9 +129,9 @@ def prepare_dataset():
 
 def random_dataset():
     train_x = np.random.rand(FLAGS.batch_size, FLAGS.depth, FLAGS.height, FLAGS.width, FLAGS.in_channels)
-    train_y = np.random.random_integers(0, FLAGS.num_classes, FLAGS.batch_size)
+    train_y = np.random.randint(0, FLAGS.num_classes, size=FLAGS.batch_size)
     val_x = np.random.rand(FLAGS.batch_size, FLAGS.depth, FLAGS.height, FLAGS.width, FLAGS.in_channels)
-    val_y = np.random.random_integers(0, FLAGS.num_classes, FLAGS.batch_size)
+    val_y = np.random.randint(0, FLAGS.num_classes, size=FLAGS.batch_size)
 
     batch_step = train_x.shape[0] // FLAGS.batch_size
     test_batch_step = val_x.shape[0] // FLAGS.batch_size
@@ -153,9 +153,9 @@ def random_dataset():
 
 def random_dataset_no_batch():
     train_x = np.random.rand(FLAGS.batch_size, FLAGS.depth, FLAGS.height, FLAGS.width, FLAGS.in_channels)
-    train_y = np.random.random_integers(0, FLAGS.num_classes, FLAGS.batch_size)
+    train_y = np.random.randint(0, FLAGS.num_classes, size=FLAGS.batch_size)
     val_x = np.random.rand(FLAGS.batch_size, FLAGS.depth, FLAGS.height, FLAGS.width, FLAGS.in_channels)
-    val_y = np.random.random_integers(0, FLAGS.num_classes, FLAGS.batch_size)
+    val_y = np.random.randint(0, FLAGS.num_classes, size=FLAGS.batch_size)
 
     if FLAGS.normalize:
         train_x = input_data.normalize(train_x, name="training set")
@@ -186,23 +186,22 @@ def train():
                                             momentum=0.9, nesterov=FLAGS.use_nesterov)
 
     # TODO: check model serialization
-    model = applications.StrictPyranet3D(num_classes=FLAGS.num_classes, out_filters=FLAGS.feature_maps,
-                                         include_top=True, input_shape=(16, 100, 100, 1))
+    # model = applications.StrictPyranet3D(num_classes=FLAGS.num_classes, out_filters=FLAGS.feature_maps,
+    #                                      include_top=True, input_shape=(16, 100, 100, 1))
 
     # or
 
-    # model = tf.keras.models.Sequential()
+    model = tf.keras.models.Sequential()
+    model.add(layers.WeightedSum3D(filters=FLAGS.feature_maps, input_shape=train_x.shape[1:]))
+    model.add(layers.MaxPooling3D())
     # model.add(layers.WeightedSum3D(filters=FLAGS.feature_maps))
-    # model.add(layers.MaxPooling3D())
-    # model.add(layers.WeightedSum3D(filters=FLAGS.feature_maps))
-    # model.add(tf.keras.layers.Flatten())
-    # model.add(tf.keras.layers.Dense(FLAGS.num_classes, activation='softmax'))
-    # model.summary()
+    model.add(tf.keras.layers.Flatten())
+    model.add(tf.keras.layers.Dense(FLAGS.num_classes, activation='softmax'))
+    model.summary()
 
     model.compile(loss='sparse_categorical_crossentropy',
                   optimizer=optimizer,
-                  metrics=['accuracy'])
-
+                  metrics=['sparse_categorical_accuracy'])
 
     model.fit(train_x, train_y, batch_size=FLAGS.batch_size, epochs=FLAGS.max_steps, callbacks=[lrate_decay])
 

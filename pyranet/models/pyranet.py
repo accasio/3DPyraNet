@@ -33,7 +33,7 @@ def ws3d_layer_output_shape(input_shape, rf=(3, 4, 4), strides=(1, 1, 1, 1, 1), 
     # Formula from: https://stackoverflow.com/a/44242277/926608
 
     padding = padding.upper()
-    # input_shape = list(map(float, input_shape))
+    input_shape = [float(x.value) if isinstance(x, tf.Dimension) else x for x in input_shape]
     if padding == "VALID":
         output_depth = np.round((input_shape[0] - rf[0] + 1.) / strides[1])
         output_height = np.round((input_shape[1] - rf[1] + 1.) / strides[2])
@@ -71,6 +71,7 @@ def pool3d_weight_initializer_like(name, tensor, initializer, weight_decay=None)
 
 def pool3d_layer_output_shape(input_shape, rf=(2, 2, 2), strides=(1, 2, 2, 2, 1), padding="VALID"):
     padding = padding.upper()
+    input_shape = [float(x.value) if isinstance(x, tf.Dimension) else x for x in input_shape]
     if padding == "VALID":
         output_depth = np.round((input_shape[0] - rf[0] + 1.) / strides[1])
         output_height = np.round((input_shape[1] - rf[1] + 1.) / strides[2])

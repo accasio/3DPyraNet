@@ -89,7 +89,13 @@ class MaxPooling3D(Pooling3D):
 
     def build(self, input_shape):
         # Make sure to call the `build` method at the end
-        super(MaxPooling3D, self).build(input_shape)
+        if isinstance(input_shape, tf.TensorShape):
+            input_shape = tuple(x.value for x in input_shape)
+        shape = (None,) + pool3d_layer_output_shape(input_shape[1:], rf=self.rf,
+                                                    strides=self.strides, padding=self.padding)
+
+        self.built = True
+        super(MaxPooling3D, self).build(shape)
 
     def call(self, inputs, **kwargs):
         if isinstance(inputs.shape, tf.TensorShape):
