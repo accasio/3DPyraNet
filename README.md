@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/EmanuelOverflow/3DPyraNet.svg?branch=master)](https://travis-ci.com/EmanuelOverflow/3DPyraNet)
+---
+
 # 3DPyranet 
 
 3DPyranet is a deep pyramidal neural network, based on biological pyramidal neurons developed in [[1]](#1);
