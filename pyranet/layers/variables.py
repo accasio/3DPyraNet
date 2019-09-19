@@ -34,7 +34,10 @@ def pool3d_weight_initializer_size_like(tensor):
 
 
 def pool3d_weight_initializer_size_by(input_shape):
-    _, d, h, w, f = input_shape
+    if isinstance(input_shape[1], tf.Dimension):
+        _, d, h, w, f = [int(i.value) if i.value is not None else i for i in input_shape]
+    else:
+        _, d, h, w, f = [int(i) if i is not None else i for i in input_shape]
     return 1, h, w, f
 
 
@@ -50,5 +53,8 @@ def pool3d_bias_initializer_size_like(tensor):
 
 
 def pool3d_bias_initializer_size_by(input_shape):
-    _, d, _, _, f = input_shape
+    if isinstance(input_shape[1], tf.Dimension):
+        _, d, _, _, f = [int(i.value) if i.value is not None else i for i in input_shape]
+    else:
+        _, d, _, _, f = [int(i) if i is not None else i for i in input_shape]
     return d, 1, 1, f

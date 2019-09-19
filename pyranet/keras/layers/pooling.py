@@ -32,13 +32,8 @@ class Pooling3D(layers.Layer):
 
     def build(self, input_shape):
 
-        # Make sure to call the `build` method at the end
-        self.built = True
-        super(Pooling3D, self).build(input_shape)
-
-    def call(self, inputs, **kwargs):
-        kernel_shape = pool3d_weight_initializer_size_like(inputs)
-        bias_shape = pool3d_bias_initializer_size_like(inputs)
+        kernel_shape = pool3d_weight_initializer_size_by(input_shape)
+        bias_shape = pool3d_bias_initializer_size_by(input_shape)
 
         if self.kernel is None:
             self.kernel = self.add_weight(name='kernel',
@@ -55,6 +50,11 @@ class Pooling3D(layers.Layer):
                                         regularizer=tf.keras.regularizers.l2(self.weight_decay)
                                         if self.weight_decay else None,
                                         trainable=True)
+
+        self.built = True
+        super(Pooling3D, self).build(input_shape)
+
+    def call(self, inputs, **kwargs):
 
         x = tf.multiply(inputs, self.kernel, name="mul_weights")
         x = tf.add(x, self.bias, name="bias_add")
@@ -89,8 +89,7 @@ class MaxPooling3D(Pooling3D):
 
     def build(self, input_shape):
         # Make sure to call the `build` method at the end
-        if isinstance(input_shape, tf.TensorShape):
-            input_shape = tuple(x.value for x in input_shape)
+
         shape = (None,) + pool3d_layer_output_shape(input_shape[1:], rf=self.rf,
                                                     strides=self.strides, padding=self.padding)
 

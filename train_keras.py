@@ -194,7 +194,7 @@ def train():
     model = tf.keras.models.Sequential()
     model.add(layers.WeightedSum3D(filters=FLAGS.feature_maps, input_shape=train_x.shape[1:]))
     model.add(layers.MaxPooling3D())
-    # model.add(layers.WeightedSum3D(filters=FLAGS.feature_maps))
+    model.add(layers.WeightedSum3D(filters=FLAGS.feature_maps))
     model.add(tf.keras.layers.Flatten())
     model.add(tf.keras.layers.Dense(FLAGS.num_classes, activation='softmax'))
     model.summary()
