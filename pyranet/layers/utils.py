@@ -11,8 +11,8 @@ def check_variable_initializer(initializer_type, default):
             if _check_module_exists('initializers', tf):  # Avoid to know in which version the neede module is delivered
                 return tf.initializers.variance_scaling(
                     scale=1.0,
-                    mode="fan_avg",
-                    distribution="truncated_normal"
+                    mode="fan_avg"
+                    # distribution="truncated_normal"
                 )
             else:
                 return tf.contrib.layers.\

@@ -7,6 +7,8 @@ import time
 from tqdm import trange
 import sys
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 flags = tf.app.flags
 
 # Checkpoint settings
@@ -16,7 +18,7 @@ flags.DEFINE_boolean("save_checkpoint", False, "Flag to save checkpoint or not")
 flags.DEFINE_string("checkpoint_name", "3dpyranet.ckpt", "Name of checkpoint file")
 
 # Input settings
-dataset_path = "path/to/dataset"
+dataset_path = "dataset/yupp"
 flags.DEFINE_string("train_path",
                     os.path.join(dataset_path, "Training.npy"),
                     "Path to npy training set")
@@ -34,22 +36,22 @@ flags.DEFINE_string("save_path", "train_dir",
 flags.DEFINE_boolean("random_run", False, "Set usage of random data for debug purpose")
 
 # Input parameters
-flags.DEFINE_integer("batch_size", 100, "Batch size")
+flags.DEFINE_integer("batch_size", 1, "Batch size")
 flags.DEFINE_integer("depth", 16, "Number of consecutive samples")
 flags.DEFINE_integer("height", 100, "Samples height")
 flags.DEFINE_integer("width", 100, "Samples width")
-flags.DEFINE_integer("in_channels", 1, "Samples channels")
-flags.DEFINE_integer("num_classes", 6, "Number of classes")
+flags.DEFINE_integer("in_channels", 3, "Samples channels")
+flags.DEFINE_integer("num_classes", 20, "Number of classes")
 
 # Preprocessing
-flags.DEFINE_boolean("normalize", True, "Normalize image in range 0-1")
+flags.DEFINE_boolean("normalize", False, "Normalize image in range 0-1")
 
 # Hyper-parameters settings
 flags.DEFINE_integer("feature_maps", 3, "Number of maps to use (strict model shares the number of maps in each layer)")
 flags.DEFINE_float("learning_rate", 0.00015, "Learning rate")
-flags.DEFINE_integer("decay_steps", 15, "Number of iteration for each decay")
+flags.DEFINE_integer("decay_steps", 5, "Number of iteration for each decay")
 flags.DEFINE_float("decay_rate", 0.1, "Learning rate decay")
-flags.DEFINE_integer("max_steps", 50, "Maximum number of epoch to perform")
+flags.DEFINE_integer("max_steps", 35, "Maximum number of epoch to perform")
 flags.DEFINE_float("weight_decay", None, "L2 regularization lambda")
 
 # Optimization algorithm
@@ -63,7 +65,7 @@ FLAGS(sys.argv)
 
 print("Parameters:")
 for attr, value in sorted(FLAGS.__flags.items()):
-    params_str += "{} = {}\n".format(attr.upper(), value)
+    params_str += "{} = {}\n".format(attr.upper(), value.value)
     print("{} = {}".format(attr.upper(), value))
 print("")
 
@@ -106,7 +108,9 @@ def prepare_dataset():
         FLAGS.train_path,
         FLAGS.train_labels_path,
         FLAGS.val_path,
-        FLAGS.val_labels_path
+        FLAGS.val_labels_path,
+        num_classes=FLAGS.num_classes,
+        to_onehot=True
     )
 
     batch_step = train_x.shape[0] // FLAGS.batch_size
@@ -178,8 +182,8 @@ def train():
 
     net = layers.strict_norm_net(input_placeholder, feature_maps=FLAGS.feature_maps, weight_decay=FLAGS.weight_decay)
 
-    logits = layers.fc_layer(net, weight_size=FLAGS.num_classes, act_fn=None,
-                             name="FC_OUT", weight_decay=FLAGS.weight_decay)
+    logits = layers.fully_connected(net, FLAGS.num_classes, act_fn=None,
+                                    name="FC_OUT", weight_decay=FLAGS.weight_decay)
 
     with tf.name_scope("Loss"):
         loss = compute_loss("Dataset_Name", logits, labels_placeholder)
@@ -272,7 +276,7 @@ def train():
                     print("Epoch {} - Acc: {} - Loss {}".format((step / batch_step), np.mean(test_acc_list),
                                                                 np.mean(test_loss_list)))
 
-                    with open(os.path.join(model_save_dir, "test_results"), "a") as f:
+                    with open(os.path.join(model_save_dir, "test_results.txt"), "a") as f:
                         f.write("Epoch: {}\n".format(step / batch_step))
                         f.write("\tMean train accuracy: {}\n".format(t_acc))
                         f.write("\tMean train loss: {}\n\n".format(t_loss))

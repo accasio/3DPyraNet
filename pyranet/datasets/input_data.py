@@ -17,7 +17,7 @@ def generate_batch(x, y, batch_size=100, shuffle=True):
                 continue
 
             local_sorted_perm = list(map(int, idx_perm[batch:batch + batch_size]))
-            print(len(local_sorted_perm), x.shape)
+            # print(len(local_sorted_perm), x.shape)
             x_out = x[local_sorted_perm]
             y_out = y[local_sorted_perm]
             yield x_out, y_out
